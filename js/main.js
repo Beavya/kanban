@@ -84,16 +84,26 @@ Vue.component('task-card', {
             <div class="task-meta">
                 <p>Создано: {{ formatDate(task.createdAt) }}</p>
                 <p>Дедлайн: {{ formatDate(task.deadline) }}</p>
+                <p v-if="columnId === 4" class="deadline-status">
+                    {{ deadlineStatus }}
+                </p>
                 <p v-if="task.editedAt" class="edited">Изменено: {{ formatDate(task.editedAt) }}</p>
             </div>
             <div class="task-actions">
-                <button v-if="columnId > 1 && columnId !== 4" @click="moveBack" class="task-btn">←</button>
+                <button v-if="columnId === 3" @click="moveBack" class="task-btn">←</button>
                 <button v-if="columnId !== 4" @click="editTask" class="task-btn">Редактировать</button>
                 <button v-if="columnId === 1" @click="deleteTask" class="task-btn">Удалить</button>
                 <button v-if="columnId < 4" @click="moveForward" class="task-btn">→</button>
             </div>
         </div>
     `,
+    computed: {
+        deadlineStatus() {
+            if (this.columnId !== 4) return ''
+            const now = Date.now()
+            return this.task.deadline < now ? 'Просрочено' : 'Выполнено в срок'
+        }
+    },
     methods: {
         formatDate(timestamp) {
             return new Date(timestamp).toLocaleString()
@@ -113,7 +123,7 @@ Vue.component('task-card', {
         moveBack() {
             this.$emit('move-task', {
                 id: this.task.id,
-                newColumnId: this.columnId === 3 ? 2 : this.columnId - 1
+                newColumnId: 2
             })
         }
     }

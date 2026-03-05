@@ -187,3 +187,7 @@ h1 {
 .add-task-form button:hover {
     opacity: 0.9;
 }
+
+.deadline-status {
+    font-weight: 700;
+}
