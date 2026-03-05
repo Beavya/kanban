@@ -1,0 +1,55 @@
+
+:root{
+    --white: #dfe1e6;
+    --dark-pink : #b1002c;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 20px;
+    background-color: var(--white);
+}
+
+#app {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--dark-pink);
+}
+
+.board-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.column {
+    background-color: #ffc1d1;
+    border-radius: 8px;
+    padding: 15px;
+    width: 300px;
+    min-height: 500px;
+}
+
+.column h2 {
+    font-size: 18px;
+    color: var(--dark-pink);
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--white);
+}
+
+.cards-container {
+    min-height: 400px;
+}
