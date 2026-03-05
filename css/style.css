@@ -191,3 +191,8 @@ h1 {
 .deadline-status {
     font-weight: 700;
 }
+
+.return-reason {
+    font-weight: 700;
+    color: var(--dark-pink);
+}

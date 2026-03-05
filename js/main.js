@@ -66,6 +66,44 @@ Vue.component('add-task-form', {
     }
 })
 
+Vue.component('return-form', {
+    props: {
+        task: {
+            type: Object,
+            required: true
+        }
+    },
+    template: `
+        <div class="add-task-form">
+            <h3>Укажите причину возврата</h3>
+            <div class="form-group">
+                <textarea 
+                    v-model="returnReason" 
+                    placeholder="Введите причину возврата"
+                    rows="3"
+                    required
+                ></textarea>
+            </div>
+            <button @click="confirmReturn" class="task-btn">Переместить</button>
+        </div>
+    `,
+    data() {
+        return {
+            returnReason: null
+        }
+    },
+    methods: {
+        confirmReturn() {
+            if (this.returnReason && this.returnReason.trim()) {
+                this.$emit('confirm-return', {
+                    id: this.task.id,
+                    reason: this.returnReason
+                })
+            }
+        }
+    }
+})
+
 Vue.component('task-card', {
     props: {
         task: {
@@ -78,28 +116,45 @@ Vue.component('task-card', {
         }
     },
     template: `
-        <div class="task-card">
-            <h3>{{ task.title }}</h3>
-            <p class="description">{{ task.description }}</p>
-            <div class="task-meta">
-                <p>Создано: {{ formatDate(task.createdAt) }}</p>
-                <p>Дедлайн: {{ formatDate(task.deadline) }}</p>
-                <p v-if="columnId === 4" class="deadline-status">
-                    {{ deadlineStatus }}
-                </p>
-                <p v-if="task.editedAt" class="edited">Изменено: {{ formatDate(task.editedAt) }}</p>
-            </div>
-            <div class="task-actions">
-                <button v-if="columnId === 3" @click="moveBack" class="task-btn">←</button>
-                <button v-if="columnId !== 4" @click="editTask" class="task-btn">Редактировать</button>
-                <button v-if="columnId === 1" @click="deleteTask" class="task-btn">Удалить</button>
-                <button v-if="columnId < 4" @click="moveForward" class="task-btn">→</button>
+        <div>
+            <return-form 
+                v-if="showReturnForm"
+                :task="task"
+                @confirm-return="handleReturn"
+            ></return-form>
+
+            <div v-else class="task-card">
+                <h3>{{ task.title }}</h3>
+                <p class="description">{{ task.description }}</p>
+                <div class="task-meta">
+                    <p>Создано: {{ formatDate(task.createdAt) }}</p>
+                    <p>Дедлайн: {{ formatDate(task.deadline) }}</p>
+                    <p v-if="columnId === 4" class="deadline-status">
+                        {{ deadlineStatus }}
+                    </p>
+                    <p v-if="task.returnReason" class="return-reason">
+                        Причина возврата: {{ task.returnReason }}
+                    </p>
+                    <p v-if="task.editedAt" class="edited">Изменено: {{ formatDate(task.editedAt) }}</p>
+                </div>
+                
+                <div class="task-actions">
+                    <button v-if="columnId === 3" @click="showReturnForm = true" class="task-btn">←</button>
+                    <button v-if="columnId !== 4" @click="editTask" class="task-btn">Редактировать</button>
+                    <button v-if="columnId === 1" @click="deleteTask" class="task-btn">Удалить</button>
+                    <button v-if="columnId < 4" @click="moveForward" class="task-btn">→</button>
+                </div>
             </div>
         </div>
     `,
+    data() {
+        return {
+            showReturnForm: false
+        }
+    },
     computed: {
         deadlineStatus() {
-            if (this.columnId !== 4) return ''
+            if (this.columnId !== 4) return null
             const now = Date.now()
             return this.task.deadline < now ? 'Просрочено' : 'Выполнено в срок'
         }
@@ -120,11 +175,13 @@ Vue.component('task-card', {
                 newColumnId: this.columnId + 1
             })
         },
-        moveBack() {
+        handleReturn(data) {
             this.$emit('move-task', {
-                id: this.task.id,
-                newColumnId: 2
+                id: data.id,
+                newColumnId: 2,
+                reason: data.reason
             })
+            this.showReturnForm = false
         }
     }
 })
@@ -212,6 +269,9 @@ Vue.component('tasks', {
             const taskIndex = this.allTasks.findIndex(t => t.id === data.id)
             if (taskIndex !== -1) {
                 this.allTasks[taskIndex].columnId = data.newColumnId
+                if (data.reason) {
+                    this.allTasks[taskIndex].returnReason = data.reason
+                }
             }
         },
         startEdit(taskId) {
