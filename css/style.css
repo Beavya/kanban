@@ -1,6 +1,6 @@
 :root{
     --white: #ffffff;
-    --light-pink: #ffd5df;
+    --light-pink: #ffe1e8;
     --dark-pink: #900125;
     --light-gray: #666666;
     --gray: #888888;
@@ -19,7 +19,7 @@ body {
 }
 
 #app {
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
@@ -102,4 +102,67 @@ h1 {
 .task-meta .edited {
     color: var(--dark-pink);
     font-weight: 500;
+}
+
+.add-task-form {
+    background-color: var(--white);
+    border: 2px solid var(--dark-pink);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 30px;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.add-task-form h3 {
+    color: var(--dark-pink);
+    text-align: center;
+}
+
+.form-group {
+    padding-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    padding-bottom: 5px;
+    color: var(--dark-pink);
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--light-pink);
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--dark-pink);
+}
+
+.form-group textarea {
+    resize: none;
+}
+
+.add-task-form button {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--dark-pink);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.add-task-form button:hover {
+    opacity: 0.9;
 }

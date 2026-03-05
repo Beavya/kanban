@@ -1,3 +1,74 @@
+let eventBus = new Vue()
+
+Vue.component('add-task-form', {
+    template: `
+        <div class="add-task-form">
+            <h3>Создать новую задачу</h3>
+            <form @submit.prevent="onSubmit">
+                <div class="form-group">
+                    <label for="title">Заголовок:</label>
+                    <input 
+                        id="title" 
+                        v-model="title" 
+                        placeholder="Введите заголовок"
+                        required
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Описание:</label>
+                    <textarea 
+                        id="description" 
+                        v-model="description" 
+                        placeholder="Введите описание задачи"
+                        rows="3"
+                        required
+                    ></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="deadline">Дедлайн:</label>
+                    <input 
+                        type="datetime-local" 
+                        id="deadline" 
+                        v-model="deadline"
+                        required
+                    >
+                </div>
+                
+                <button type="submit">Создать задачу</button>
+            </form>
+        </div>
+    `,
+    data() {
+        return {
+            title: null,
+            description: null,
+            deadline: null
+        }
+    },
+    methods: {
+        onSubmit() {
+            // Преобразуем дату из input в timestamp
+            const deadlineDate = new Date(this.deadline).getTime()
+            
+            let newTask = {
+                title: this.title,
+                description: this.description,
+                createdAt: Date.now(),
+                deadline: deadlineDate,
+                editedAt: null
+            }
+            
+            eventBus.$emit('task-created', newTask)
+            
+            this.title = null
+            this.description = null
+            this.deadline = null
+        }
+    }
+})
+
 Vue.component('task-card', {
     props: {
         task: {
