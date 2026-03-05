@@ -12,6 +12,11 @@
     <div id="app">
         <h1>Kanban Board</h1>
         <div class="board-container">
+            <column 
+                v-for="col in columns" 
+                :key="col.id"
+                :column="col"
+            ></column>
         </div>
     </div>
 </body>

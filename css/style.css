@@ -1,7 +1,8 @@
 
 :root{
-    --white: #dfe1e6;
-    --dark-pink : #b1002c;
+    --white: #ffffff;
+    --light-pink: #ffd5df;
+    --dark-pink : #900125;
 }
 
 * {
@@ -13,7 +14,7 @@
 body {
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding: 20px;
-    background-color: var(--white);
+    background-color: var(--light-pink);
 }
 
 #app {
@@ -35,8 +36,9 @@ h1 {
 }
 
 .column {
-    background-color: #ffc1d1;
-    border-radius: 8px;
+    background-color: var(--white);
+    border: 2px solid var(--dark-pink);
+    border-radius: 10px;
     padding: 15px;
     width: 300px;
     min-height: 500px;
@@ -45,9 +47,7 @@ h1 {
 .column h2 {
     font-size: 18px;
     color: var(--dark-pink);
-    margin-bottom: 15px;
     padding-bottom: 10px;
-    border-bottom: 2px solid var(--white);
 }
 
 .cards-container {
