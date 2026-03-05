@@ -84,11 +84,53 @@ Vue.component('task-card', {
                 <p>Дедлайн: {{ formatDate(task.deadline) }}</p>
                 <p v-if="task.editedAt" class="edited">Изменено: {{ formatDate(task.editedAt) }}</p>
             </div>
+            <div class="task-actions">
+                <button @click="deleteTask" class="delete-btn">Удалить</button>
+            </div>
         </div>
     `,
     methods: {
         formatDate(timestamp) {
             return new Date(timestamp).toLocaleString()
+        },
+        deleteTask() {
+            this.$emit('delete-task', this.task.id)
+        }
+    }
+})
+
+Vue.component('tasks', {
+    props: {
+        columnId: {
+            type: Number,
+            required: true
+        },
+        allTasks: {
+            type: Array,
+            required: true
+        }
+    },
+    template: `
+        <div class="tasks-container">
+            <task-card 
+                v-for="task in filteredTasks" 
+                :key="task.id"
+                :task="task"
+                @delete-task="deleteTask"
+            ></task-card>
+        </div>
+    `,
+    computed: {
+        filteredTasks() {
+            return this.allTasks.filter(task => task.columnId === this.columnId)
+        }
+    },
+    methods: {
+        deleteTask(taskId) {
+            const taskIndex = this.allTasks.findIndex(task => task.id === taskId)
+            if (taskIndex !== -1) {
+                this.allTasks.splice(taskIndex, 1)
+            }
         }
     }
 })
@@ -99,7 +141,7 @@ Vue.component('column', {
             type: Object,
             required: true
         },
-        tasks: {
+        allTasks: {
             type: Array,
             required: true
         }
@@ -107,20 +149,12 @@ Vue.component('column', {
     template: `
         <div class="column">
             <h2>{{ column.title }}</h2>
-            <div class="cards-container">
-                <task-card 
-                    v-for="task in filteredTasks" 
-                    :key="task.id"
-                    :task="task"
-                ></task-card>
-            </div>
+            <tasks 
+                :column-id="column.id" 
+                :all-tasks="allTasks"
+            ></tasks>
         </div>
-    `,
-    computed: {
-        filteredTasks() {
-            return this.tasks.filter(task => task.columnId === this.column.id)
-        }
-    }
+    `
 })
 
 let app = new Vue({
@@ -132,17 +166,17 @@ let app = new Vue({
             { id: 3, title: 'Тестирование' },
             { id: 4, title: 'Выполненные задачи' }
         ],
-        tasks: []
+        allTasks: []
     },
     mounted() {
         eventBus.$on('task-created', (newTask) => {
-            this.tasks.push({
-                id: this.tasks.length + 1,
+            this.allTasks.push({
+                id: this.allTasks.length + 1,
                 title: newTask.title,
                 description: newTask.description,
                 createdAt: newTask.createdAt,
                 deadline: newTask.deadline,
-                editedAt: newTask.editedAt,
+                editedAt: null,
                 columnId: 1
             })
         })

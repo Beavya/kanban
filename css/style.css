@@ -166,3 +166,24 @@ h1 {
 .add-task-form button:hover {
     opacity: 0.9;
 }
+
+.task-actions {
+    padding-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.delete-btn {
+    background-color: var(--dark-pink);
+    color: var(--white);
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: opacity 0.2s;
+}
+
+.delete-btn:hover {
+    opacity: 0.9;
+}
