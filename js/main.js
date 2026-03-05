@@ -71,6 +71,10 @@ Vue.component('task-card', {
         task: {
             type: Object,
             required: true
+        },
+        columnId: {
+            type: Number,
+            required: true
         }
     },
     template: `
@@ -83,8 +87,10 @@ Vue.component('task-card', {
                 <p v-if="task.editedAt" class="edited">Изменено: {{ formatDate(task.editedAt) }}</p>
             </div>
             <div class="task-actions">
-                <button @click="editTask" class="task-btn">Редактировать</button>
-                <button @click="deleteTask" class="task-btn">Удалить</button>
+                <button v-if="columnId > 1 && columnId !== 4" @click="moveBack" class="task-btn">←</button>
+                <button v-if="columnId !== 4" @click="editTask" class="task-btn">Редактировать</button>
+                <button v-if="columnId === 1" @click="deleteTask" class="task-btn">Удалить</button>
+                <button v-if="columnId < 4" @click="moveForward" class="task-btn">→</button>
             </div>
         </div>
     `,
@@ -97,6 +103,18 @@ Vue.component('task-card', {
         },
         deleteTask() {
             this.$emit('delete-task', this.task.id)
+        },
+        moveForward() {
+            this.$emit('move-task', {
+                id: this.task.id,
+                newColumnId: this.columnId + 1
+            })
+        },
+        moveBack() {
+            this.$emit('move-task', {
+                id: this.task.id,
+                newColumnId: this.columnId === 3 ? 2 : this.columnId - 1
+            })
         }
     }
 })
@@ -155,8 +173,10 @@ Vue.component('tasks', {
                     v-if="!editingTask || editingTask.id !== task.id"
                     :key="task.id"
                     :task="task"
+                    :column-id="columnId"
                     @edit-task="startEdit"
                     @delete-task="deleteTask"
+                    @move-task="moveTask"
                 ></task-card>
             </template>
         </div>
@@ -176,6 +196,12 @@ Vue.component('tasks', {
             const taskIndex = this.allTasks.findIndex(task => task.id === taskId)
             if (taskIndex !== -1) {
                 this.allTasks.splice(taskIndex, 1)
+            }
+        },
+        moveTask(data) {
+            const taskIndex = this.allTasks.findIndex(t => t.id === data.id)
+            if (taskIndex !== -1) {
+                this.allTasks[taskIndex].columnId = data.newColumnId
             }
         },
         startEdit(taskId) {
