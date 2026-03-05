@@ -49,7 +49,6 @@ Vue.component('add-task-form', {
     },
     methods: {
         onSubmit() {
-            // Преобразуем дату из input в timestamp
             const deadlineDate = new Date(this.deadline).getTime()
             
             let newTask = {
@@ -133,25 +132,19 @@ let app = new Vue({
             { id: 3, title: 'Тестирование' },
             { id: 4, title: 'Выполненные задачи' }
         ],
-        tasks: [
-            {
-                id: 1,
-                title: 'Создать макет',
-                description: 'Разработать дизайн главной страницы',
-                createdAt: Date.now() - 86400000,
-                deadline: Date.now() + 86400000 * 2,
-                editedAt:  Date.now() + 86400000 * 2,
+        tasks: []
+    },
+    mounted() {
+        eventBus.$on('task-created', (newTask) => {
+            this.tasks.push({
+                id: this.tasks.length + 1,
+                title: newTask.title,
+                description: newTask.description,
+                createdAt: newTask.createdAt,
+                deadline: newTask.deadline,
+                editedAt: newTask.editedAt,
                 columnId: 1
-            },
-            {
-                id: 2,
-                title: 'Верстка компонентов',
-                description: 'Сверстать карточки товаров',
-                createdAt: Date.now() - 43200000,
-                deadline: Date.now() + 86400000,
-                editedAt: null,
-                columnId: 2
-            }
-        ]
+            })
+        })
     }
 })
