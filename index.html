@@ -13,13 +13,22 @@
         <h1>Kanban Board</h1>
         
         <add-task-form></add-task-form>
-
+        
+        <edit-task-form 
+            v-if="editingTask"
+            :task="editingTask"
+            @save-edit="saveEdit"
+            @cancel-edit="cancelEdit"
+        ></edit-task-form>
+        
         <div class="board-container">
             <column 
                 v-for="col in columns" 
                 :key="col.id"
                 :column="col"
                 :all-tasks="allTasks"
+                @edit-task="startEdit"
+                @delete-task="deleteTask"
             ></column>
         </div>
     </div>

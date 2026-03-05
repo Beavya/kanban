@@ -1,6 +1,6 @@
 :root{
     --white: #ffffff;
-    --light-pink: #ffe1e8;
+    --light-pink: #f6bcc8;
     --dark-pink: #900125;
     --light-gray: #666666;
     --gray: #888888;
@@ -111,23 +111,21 @@ h1 {
     padding: 20px;
     margin-bottom: 30px;
     max-width: 500px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
 }
 
 .add-task-form h3 {
     color: var(--dark-pink);
     text-align: center;
+    margin-bottom: 15px;
 }
 
 .form-group {
-    padding-bottom: 15px;
+    margin-bottom: 15px;
 }
 
 .form-group label {
     display: block;
-    padding-bottom: 5px;
+    margin-bottom: 5px;
     color: var(--dark-pink);
     font-weight: 500;
 }
@@ -171,9 +169,10 @@ h1 {
     padding-top: 10px;
     display: flex;
     justify-content: flex-end;
+    gap: 5px;
 }
 
-.delete-btn {
+.task-btn {
     background-color: var(--dark-pink);
     color: var(--white);
     border: none;
@@ -184,6 +183,6 @@ h1 {
     transition: opacity 0.2s;
 }
 
-.delete-btn:hover {
+.task-btn:hover {
     opacity: 0.9;
 }
