@@ -1,4 +1,4 @@
-:root{
+:root {
     --white: #ffffff;
     --light-pink: #f6bcc8;
     --dark-pink: #900125;
@@ -7,15 +7,15 @@
 }
 
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding: 20px;
     background-color: var(--light-pink);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 #app {
@@ -24,10 +24,10 @@ body {
 }
 
 h1 {
-    text-align: center;
     margin-bottom: 30px;
     color: var(--dark-pink);
     font-size: 38px;
+    text-align: center;
 }
 
 .board-container {
@@ -38,19 +38,19 @@ h1 {
 }
 
 .column {
+    width: 300px;
+    min-height: 500px;
+    padding: 15px;
     background-color: var(--white);
     border: 2px solid var(--dark-pink);
     border-radius: 15px;
-    padding: 15px;
-    width: 300px;
-    min-height: 500px;
     box-shadow: 0 4px 8px rgba(144, 1, 37, 0.1);
 }
 
 .column h2 {
-    font-size: 18px;
-    color: var(--dark-pink);
     padding-bottom: 15px;
+    color: var(--dark-pink);
+    font-size: 18px;
     text-align: center;
 }
 
@@ -59,44 +59,44 @@ h1 {
 }
 
 .task-card {
+    padding: 12px;
+    margin-bottom: 10px;
     background-color: var(--white);
     border: 1px solid var(--light-pink);
     border-radius: 10px;
-    padding: 12px;
-    margin-bottom: 10px;
     box-shadow: 0 2px 4px rgba(144, 1, 37, 0.05);
     transition: all 0.2s ease;
 }
 
 .task-card:hover {
-    box-shadow: 0 4px 8px rgba(144, 1, 37, 0.15);
     border-color: var(--dark-pink);
+    box-shadow: 0 4px 8px rgba(144, 1, 37, 0.15);
 }
 
 .task-card h3 {
-    font-size: 16px;
     padding-bottom: 8px;
     color: var(--dark-pink);
+    font-size: 16px;
     font-weight: 600;
 }
 
 .task-card .description {
-    font-size: 14px;
-    color: var(--light-gray);
-    border-bottom: 1px solid var(--light-pink);
     padding-bottom: 10px;
+    color: var(--light-gray);
+    font-size: 14px;
+    border-bottom: 1px solid var(--light-pink);
 }
 
 .task-meta {
-    font-size: 12px;
-    color: var(--gray);
     padding-top: 8px;
+    color: var(--gray);
+    font-size: 12px;
 }
 
 .task-meta p {
     display: flex;
-    align-items: center;
     gap: 8px;
+    align-items: center;
 }
 
 .task-meta .edited {
@@ -104,19 +104,42 @@ h1 {
     font-weight: 500;
 }
 
+.task-actions {
+    display: flex;
+    gap: 5px;
+    justify-content: flex-end;
+    padding-top: 10px;
+}
+
+.task-btn {
+    padding: 5px 10px;
+    background-color: var(--dark-pink);
+    color: var(--white);
+    font-size: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.task-btn:hover {
+    opacity: 0.9;
+}
+
 .add-task-form {
+    max-width: 500px;
+    padding: 20px;
+    margin-bottom: 30px;
     background-color: var(--white);
     border: 2px solid var(--dark-pink);
     border-radius: 15px;
-    padding: 20px;
-    margin-bottom: 30px;
-    max-width: 500px;
 }
 
 .add-task-form h3 {
-    color: var(--dark-pink);
-    text-align: center;
     margin-bottom: 15px;
+    color: var(--dark-pink);
+    font-size: 18px;
+    text-align: center;
 }
 
 .form-group {
@@ -134,9 +157,9 @@ h1 {
 .form-group textarea {
     width: 100%;
     padding: 10px;
+    font-size: 14px;
     border: 1px solid var(--light-pink);
     border-radius: 8px;
-    font-size: 14px;
 }
 
 .form-group input:focus,
@@ -154,35 +177,13 @@ h1 {
     padding: 12px;
     background-color: var(--dark-pink);
     color: var(--white);
+    font-size: 16px;
     border: none;
     border-radius: 8px;
-    font-size: 16px;
     cursor: pointer;
     transition: opacity 0.2s;
 }
 
 .add-task-form button:hover {
-    opacity: 0.9;
-}
-
-.task-actions {
-    padding-top: 10px;
-    display: flex;
-    justify-content: flex-end;
-    gap: 5px;
-}
-
-.task-btn {
-    background-color: var(--dark-pink);
-    color: var(--white);
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
-    font-size: 12px;
-    transition: opacity 0.2s;
-}
-
-.task-btn:hover {
     opacity: 0.9;
 }

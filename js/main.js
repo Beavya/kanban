@@ -49,13 +49,11 @@ Vue.component('add-task-form', {
     },
     methods: {
         onSubmit() {
-            const deadlineDate = new Date(this.deadline).getTime()
-            
             let newTask = {
                 title: this.title,
                 description: this.description,
                 createdAt: Date.now(),
-                deadline: deadlineDate,
+                deadline: new Date(this.deadline).getTime(),
                 editedAt: null
             }
             
@@ -123,7 +121,7 @@ Vue.component('tasks', {
                         <label for="edit-title">Заголовок:</label>
                         <input 
                             id="edit-title" 
-                            v-model="editTitle" 
+                            v-model="editingTask.title" 
                             required
                         >
                     </div>
@@ -132,7 +130,7 @@ Vue.component('tasks', {
                         <label for="edit-description">Описание:</label>
                         <textarea 
                             id="edit-description" 
-                            v-model="editDescription" 
+                            v-model="editingTask.description" 
                             rows="3"
                             required
                         ></textarea>
@@ -143,7 +141,7 @@ Vue.component('tasks', {
                         <input 
                             type="datetime-local" 
                             id="edit-deadline" 
-                            v-model="editDeadline"
+                            v-model="editingTask.deadline"
                             required
                         >
                     </div>
@@ -154,7 +152,7 @@ Vue.component('tasks', {
             
             <template v-for="task in filteredTasks">
                 <task-card 
-                    v-if="editingTask !== task.id"
+                    v-if="!editingTask || editingTask.id !== task.id"
                     :key="task.id"
                     :task="task"
                     @edit-task="startEdit"
@@ -165,10 +163,7 @@ Vue.component('tasks', {
     `,
     data() {
         return {
-            editingTask: null,
-            editTitle: '',
-            editDescription: '',
-            editDeadline: ''
+            editingTask: null
         }
     },
     computed: {
@@ -186,10 +181,12 @@ Vue.component('tasks', {
         startEdit(taskId) {
             const task = this.allTasks.find(t => t.id === taskId)
             if (task) {
-                this.editingTask = taskId
-                this.editTitle = task.title
-                this.editDescription = task.description
-                this.editDeadline = this.formatDateForInput(task.deadline)
+                this.editingTask = {
+                    id: task.id,
+                    title: task.title,
+                    description: task.description,
+                    deadline: this.formatDateForInput(task.deadline)
+                }
             }
         },
         formatDateForInput(timestamp) {
@@ -199,11 +196,11 @@ Vue.component('tasks', {
         saveEdit() {
             if (!this.editingTask) return
             
-            const taskIndex = this.allTasks.findIndex(t => t.id === this.editingTask)
+            const taskIndex = this.allTasks.findIndex(t => t.id === this.editingTask.id)
             if (taskIndex !== -1) {
-                this.allTasks[taskIndex].title = this.editTitle
-                this.allTasks[taskIndex].description = this.editDescription
-                this.allTasks[taskIndex].deadline = new Date(this.editDeadline).getTime()
+                this.allTasks[taskIndex].title = this.editingTask.title
+                this.allTasks[taskIndex].description = this.editingTask.description
+                this.allTasks[taskIndex].deadline = new Date(this.editingTask.deadline).getTime()
                 this.allTasks[taskIndex].editedAt = Date.now()
             }
             this.editingTask = null
