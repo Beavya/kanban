@@ -94,10 +94,12 @@ Vue.component('return-form', {
     },
     methods: {
         confirmReturn() {
-            this.$emit('confirm-return', {
-                id: this.task.id,
-                reason: this.returnReason
-            })
+            if (this.returnReason && this.returnReason.trim()) {
+                this.$emit('confirm-return', {
+                    id: this.task.id,
+                    reason: this.returnReason
+                })
+            }
         }
     }
 })
