@@ -10,27 +10,33 @@
 </head>
 <body>
     <div id="app">
-        <task-form 
-            v-if="!editingTask"
-            @save-edit="saveEdit"
-        ></task-form>
+        <sidebar :tasks="allTasks"></sidebar>
+        
+        <div class="content">
+            <h1>Kanban Board</h1>
+            
+            <task-form 
+                v-if="!editingTask"
+                @save-edit="saveEdit"
+            ></task-form>
 
-        <task-form 
-            v-if="editingTask"
-            :task="editingTask"
-            @save-edit="saveEdit"
-        ></task-form>
-                        
-        <div class="board-container">
-            <column 
-                v-for="col in columns" 
-                :key="col.id"
-                :column="col"
-                :all-tasks="allTasks"
-                @edit-task="startEdit"
-                @delete-task="deleteTask"
-                @move-task="moveTask"
-            ></column>
+            <task-form 
+                v-if="editingTask"
+                :task="editingTask"
+                @save-edit="saveEdit"
+            ></task-form>
+                    
+            <div class="board-container">
+                <column 
+                    v-for="col in columns" 
+                    :key="col.id"
+                    :column="col"
+                    :all-tasks="allTasks"
+                    @edit-task="startEdit"
+                    @delete-task="deleteTask"
+                    @move-task="moveTask"
+                ></column>
+            </div>
         </div>
     </div>
 </body>

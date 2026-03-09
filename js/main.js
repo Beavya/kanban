@@ -1,5 +1,52 @@
 let eventBus = new Vue()
 
+Vue.component('sidebar', {
+    props: {
+        tasks: {
+            type: Array,
+            required: true
+        }
+    },
+    template: `
+        <div class="sidebar">
+            <h3>Статистика дедлайнов</h3>
+            <div class="stats-container">
+                <div class="stat-item">
+                    <span>Критические (<24ч):</span>
+                    <span>{{ criticalCount }}</span>
+                </div>
+                <div class="stat-item">
+                    <span>Предупреждение (<72ч):</span>
+                    <span>{{ warningCount }}</span>
+                </div>
+            </div>
+        </div>
+    `,
+    computed: {
+        criticalCount() {
+            return this.tasks.filter(task => {
+                if (task.columnId === 4) return false
+                const hours = this.hoursUntilDeadline(task.deadline)
+                return hours <= 24
+            }).length
+        },
+        warningCount() {
+            return this.tasks.filter(task => {
+                if (task.columnId === 4) return false
+                const hours = this.hoursUntilDeadline(task.deadline)
+                return hours > 24 && hours <= 72
+            }).length
+        }
+    },
+    methods: {
+        hoursUntilDeadline(deadline) {
+            const now = Date.now()
+            const diffMs = deadline - now
+            return diffMs / (1000 * 60 * 60)
+        }
+    }
+})
+
 Vue.component('task-form', {
     props: {
         task: {
