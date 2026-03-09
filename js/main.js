@@ -143,7 +143,7 @@ Vue.component('task-card', {
                 @confirm-return="handleReturn"
             ></return-form>
 
-            <div v-else class="task-card">
+            <div v-else class="task-card" :class="deadlineClass">
                 <h3>{{ task.title }}</h3>
                 <p class="description">{{ task.description }}</p>
                 <div class="task-meta">
@@ -179,6 +179,23 @@ Vue.component('task-card', {
             if (this.columnId !== 4) return null
             const now = Date.now()
             return this.task.deadline < now ? 'Просрочено' : 'Выполнено в срок'
+        },
+        hoursUntilDeadline() {
+            const now = Date.now()
+            const diffMs = this.task.deadline - now
+            return diffMs / (1000 * 60 * 60)
+        },
+        deadlineClass() {
+            if (this.columnId === 4) return ''
+            
+            const hours = this.hoursUntilDeadline
+            
+            if (hours <= 24) {
+                return 'deadline-critical'
+            } else if (hours <= 72) {
+                return 'deadline-warning'
+            }
+            return ''
         }
     },
     methods: {
