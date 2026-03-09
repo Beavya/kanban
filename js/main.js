@@ -1,15 +1,21 @@
 let eventBus = new Vue()
 
-Vue.component('add-task-form', {
+Vue.component('task-form', {
+    props: {
+        task: {
+            type: Object,
+            default: null
+        }
+    },
     template: `
         <div class="add-task-form">
-            <h3>Создать новую задачу</h3>
+            <h3>{{ task ? 'Редактировать задачу' : 'Создать новую задачу' }}</h3>
             <form @submit.prevent="onSubmit">
                 <div class="form-group">
                     <label for="title">Заголовок:</label>
                     <input 
                         id="title" 
-                        v-model="title" 
+                        v-model="formData.title" 
                         placeholder="Введите заголовок"
                         required
                     >
@@ -19,7 +25,7 @@ Vue.component('add-task-form', {
                     <label for="description">Описание:</label>
                     <textarea 
                         id="description" 
-                        v-model="description" 
+                        v-model="formData.description" 
                         placeholder="Введите описание задачи"
                         rows="3"
                         required
@@ -31,37 +37,51 @@ Vue.component('add-task-form', {
                     <input 
                         type="datetime-local" 
                         id="deadline" 
-                        v-model="deadline"
+                        v-model="formData.deadline"
                         required
                     >
                 </div>
                 
-                <button type="submit">Создать задачу</button>
+                <button type="submit">{{ task ? 'Сохранить' : 'Создать задачу' }}</button>
             </form>
         </div>
     `,
     data() {
         return {
-            title: null,
-            description: null,
-            deadline: null
+            formData: {
+                title: this.task ? this.task.title : null,
+                description: this.task ? this.task.description : null,
+                deadline: this.task ? this.formatDateForInput(this.task.deadline) : null
+            }
         }
     },
     methods: {
+        formatDateForInput(timestamp) {
+            const date = new Date(timestamp)
+            return date.toISOString().slice(0, 16)
+        },
         onSubmit() {
-            let newTask = {
-                title: this.title,
-                description: this.description,
-                createdAt: Date.now(),
-                deadline: new Date(this.deadline).getTime(),
-                editedAt: null
+            if (this.task) {
+                this.$emit('save-edit', {
+                    id: this.task.id,
+                    title: this.formData.title,
+                    description: this.formData.description,
+                    deadline: new Date(this.formData.deadline).getTime(),
+                    editedAt: Date.now()
+                })
+            } else {
+                let newTask = {
+                    title: this.formData.title,
+                    description: this.formData.description,
+                    createdAt: Date.now(),
+                    deadline: new Date(this.formData.deadline).getTime(),
+                    editedAt: null
+                }
+                eventBus.$emit('task-created', newTask)
+                this.formData.title = null
+                this.formData.description = null
+                this.formData.deadline = null
             }
-            
-            eventBus.$emit('task-created', newTask)
-            
-            this.title = null
-            this.description = null
-            this.deadline = null
         }
     }
 })
@@ -127,15 +147,17 @@ Vue.component('task-card', {
                 <h3>{{ task.title }}</h3>
                 <p class="description">{{ task.description }}</p>
                 <div class="task-meta">
-                    <p>Создано: {{ formatDate(task.createdAt) }}</p>
-                    <p>Дедлайн: {{ formatDate(task.deadline) }}</p>
-                    <p v-if="columnId === 4" class="deadline-status">
+                    <p class="meta-item">Создано: {{ formatDate(task.createdAt) }}</p>
+                    <p class="meta-item">Дедлайн: {{ formatDate(task.deadline) }}</p>
+                    <p v-if="columnId === 4" class="deadline-status meta-item">
                         {{ deadlineStatus }}
                     </p>
-                    <p v-if="task.returnReason" class="return-reason">
+                    <p v-if="task.returnReason" class="return-reason meta-item">
                         Причина возврата: {{ task.returnReason }}
                     </p>
-                    <p v-if="task.editedAt" class="edited">Изменено: {{ formatDate(task.editedAt) }}</p>
+                    <p v-if="task.editedAt" class="edited meta-item">
+                        Изменено: {{ formatDate(task.editedAt) }}
+                    </p>
                 </div>
                 
                 <div class="task-actions">
@@ -199,107 +221,20 @@ Vue.component('tasks', {
     },
     template: `
         <div class="tasks-container">
-            <div v-if="editingTask" class="add-task-form">
-                <h3>Редактировать задачу</h3>
-                <form @submit.prevent="saveEdit">
-                    <div class="form-group">
-                        <label for="edit-title">Заголовок:</label>
-                        <input 
-                            id="edit-title" 
-                            v-model="editingTask.title" 
-                            required
-                        >
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="edit-description">Описание:</label>
-                        <textarea 
-                            id="edit-description" 
-                            v-model="editingTask.description" 
-                            rows="3"
-                            required
-                        ></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="edit-deadline">Дедлайн:</label>
-                        <input 
-                            type="datetime-local" 
-                            id="edit-deadline" 
-                            v-model="editingTask.deadline"
-                            required
-                        >
-                    </div>
-                    
-                    <button type="submit">Сохранить</button>
-                </form>
-            </div>
-            
-            <template v-for="task in filteredTasks">
-                <task-card 
-                    v-if="!editingTask || editingTask.id !== task.id"
-                    :key="task.id"
-                    :task="task"
-                    :column-id="columnId"
-                    @edit-task="startEdit"
-                    @delete-task="deleteTask"
-                    @move-task="moveTask"
-                ></task-card>
-            </template>
+            <task-card 
+                v-for="task in filteredTasks" 
+                :key="task.id"
+                :task="task"
+                :column-id="columnId"
+                @edit-task="$emit('edit-task', $event)"
+                @delete-task="$emit('delete-task', $event)"
+                @move-task="$emit('move-task', $event)"
+            ></task-card>
         </div>
     `,
-    data() {
-        return {
-            editingTask: null
-        }
-    },
     computed: {
         filteredTasks() {
             return this.allTasks.filter(task => task.columnId === this.columnId)
-        }
-    },
-    methods: {
-        deleteTask(taskId) {
-            const taskIndex = this.allTasks.findIndex(task => task.id === taskId)
-            if (taskIndex !== -1) {
-                this.allTasks.splice(taskIndex, 1)
-            }
-        },
-        moveTask(data) {
-            const taskIndex = this.allTasks.findIndex(t => t.id === data.id)
-            if (taskIndex !== -1) {
-                this.allTasks[taskIndex].columnId = data.newColumnId
-                if (data.reason) {
-                    this.allTasks[taskIndex].returnReason = data.reason
-                }
-            }
-        },
-        startEdit(taskId) {
-            const task = this.allTasks.find(t => t.id === taskId)
-            if (task) {
-                this.editingTask = {
-                    id: task.id,
-                    title: task.title,
-                    description: task.description,
-                    deadline: this.formatDateForInput(task.deadline)
-                }
-            }
-        },
-        formatDateForInput(timestamp) {
-            const date = new Date(timestamp)
-            return date.toISOString().slice(0, 16)
-        },
-        saveEdit() {
-            if (!this.editingTask) return
-            
-            const taskIndex = this.allTasks.findIndex(t => t.id === this.editingTask.id)
-            if (taskIndex !== -1) {
-                this.allTasks[taskIndex].title = this.editingTask.title
-                this.allTasks[taskIndex].description = this.editingTask.description
-                this.allTasks[taskIndex].deadline = new Date(this.editingTask.deadline).getTime()
-                this.allTasks[taskIndex].editedAt = Date.now()
-            }
-            this.editingTask = null
         }
     }
 })
@@ -321,6 +256,9 @@ Vue.component('column', {
             <tasks 
                 :column-id="column.id" 
                 :all-tasks="allTasks"
+                @edit-task="$emit('edit-task', $event)"
+                @delete-task="$emit('delete-task', $event)"
+                @move-task="$emit('move-task', $event)"
             ></tasks>
         </div>
     `
@@ -335,7 +273,38 @@ let app = new Vue({
             { id: 3, title: 'Тестирование' },
             { id: 4, title: 'Выполненные задачи' }
         ],
-        allTasks: []
+        allTasks: [],
+        editingTask: null
+    },
+    methods: {
+        startEdit(taskId) {
+            this.editingTask = this.allTasks.find(t => t.id === taskId)
+        },
+        saveEdit(updatedTask) {
+            const taskIndex = this.allTasks.findIndex(t => t.id === updatedTask.id)
+            if (taskIndex !== -1) {
+                this.allTasks[taskIndex].title = updatedTask.title
+                this.allTasks[taskIndex].description = updatedTask.description
+                this.allTasks[taskIndex].deadline = updatedTask.deadline
+                this.allTasks[taskIndex].editedAt = updatedTask.editedAt
+            }
+            this.editingTask = null
+        },
+        deleteTask(taskId) {
+            const taskIndex = this.allTasks.findIndex(t => t.id === taskId)
+            if (taskIndex !== -1) {
+                this.allTasks.splice(taskIndex, 1)
+            }
+        },
+        moveTask(data) {
+            const taskIndex = this.allTasks.findIndex(t => t.id === data.id)
+            if (taskIndex !== -1) {
+                this.allTasks[taskIndex].columnId = data.newColumnId
+                if (data.reason) {
+                    this.allTasks[taskIndex].returnReason = data.reason
+                }
+            }
+        }
     },
     mounted() {
         eventBus.$on('task-created', (newTask) => {
