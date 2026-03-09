@@ -10,10 +10,12 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    word-spacing: 3px;
+    letter-spacing: 1px;
 }
 
 body {
-    padding: 20px;
+    padding: 30px;
     background-color: var(--light-pink);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -40,7 +42,7 @@ h1 {
 .column {
     width: 300px;
     min-height: 500px;
-    padding: 15px;
+    padding: 20px;
     background-color: var(--white);
     border: 2px solid var(--dark-pink);
     border-radius: 15px;
@@ -48,7 +50,7 @@ h1 {
 }
 
 .column h2 {
-    padding-bottom: 15px;
+    padding-bottom: 20px;
     color: var(--dark-pink);
     font-size: 18px;
     text-align: center;
@@ -59,7 +61,7 @@ h1 {
 }
 
 .task-card {
-    padding: 12px;
+    padding: 20px;
     margin-bottom: 10px;
     background-color: var(--white);
     border: 1px solid var(--light-pink);
@@ -74,21 +76,21 @@ h1 {
 }
 
 .task-card h3 {
-    padding-bottom: 8px;
+    padding-bottom: 12px;
     color: var(--dark-pink);
     font-size: 16px;
     font-weight: 600;
 }
 
 .task-card .description {
-    padding-bottom: 10px;
+    padding-bottom: 15px;
     color: var(--light-gray);
     font-size: 14px;
     border-bottom: 1px solid var(--light-pink);
 }
 
 .task-meta {
-    padding-top: 8px;
+    padding-top: 10px;
     color: var(--gray);
     font-size: 12px;
 }
@@ -108,11 +110,11 @@ h1 {
     display: flex;
     gap: 5px;
     justify-content: flex-end;
-    padding-top: 10px;
+    padding-top: 15px;
 }
 
 .task-btn {
-    padding: 5px 10px;
+    padding: 8px 10px;
     background-color: var(--dark-pink);
     color: var(--white);
     font-size: 12px;
@@ -128,7 +130,7 @@ h1 {
 
 .add-task-form {
     max-width: 500px;
-    padding: 20px;
+    padding: 25px;
     margin-bottom: 30px;
     background-color: var(--white);
     border: 2px solid var(--dark-pink);
@@ -156,7 +158,7 @@ h1 {
 .form-group input,
 .form-group textarea {
     width: 100%;
-    padding: 10px;
+    padding: 15px;
     font-size: 14px;
     border: 1px solid var(--light-pink);
     border-radius: 8px;
@@ -174,7 +176,7 @@ h1 {
 
 .add-task-form button {
     width: 100%;
-    padding: 12px;
+    padding: 15px;
     background-color: var(--dark-pink);
     color: var(--white);
     font-size: 16px;
