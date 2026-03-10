@@ -47,6 +47,44 @@ Vue.component('sidebar', {
     }
 })
 
+Vue.component('return-form', {
+    props: {
+        task: {
+            type: Object,
+            required: true
+        }
+    },
+    template: `
+        <div class="add-task-form">
+            <h3>Укажите причину возврата</h3>
+            <div class="form-group">
+                <textarea 
+                    v-model="returnReason" 
+                    placeholder="Введите причину возврата"
+                    rows="3"
+                    required
+                ></textarea>
+            </div>
+            <button @click="confirmReturn" class="task-btn">Переместить</button>
+        </div>
+    `,
+    data() {
+        return {
+            returnReason: null
+        }
+    },
+    methods: {
+        confirmReturn() {
+            if (this.returnReason && this.returnReason.trim()) {
+                this.$emit('confirm-return', {
+                    id: this.task.id,
+                    reason: this.returnReason
+                })
+            }
+        }
+    }
+})
+
 Vue.component('task-form', {
     props: {
         task: {
@@ -96,9 +134,25 @@ Vue.component('task-form', {
     data() {
         return {
             formData: {
-                title: this.task ? this.task.title : null,
-                description: this.task ? this.task.description : null,
-                deadline: this.task ? this.formatDateForInput(this.task.deadline) : null
+                title: null,
+                description: null,
+                deadline: null
+            }
+        }
+    },
+    watch: {
+        task: {
+            immediate: true,
+            handler(newTask) {
+                if (newTask) {
+                    this.formData.title = newTask.title
+                    this.formData.description = newTask.description
+                    this.formData.deadline = this.formatDateForInput(newTask.deadline)
+                } else {
+                    this.formData.title = null
+                    this.formData.description = null
+                    this.formData.deadline = null
+                }
             }
         }
     },
@@ -125,47 +179,10 @@ Vue.component('task-form', {
                     editedAt: null
                 }
                 eventBus.$emit('task-created', newTask)
+
                 this.formData.title = null
                 this.formData.description = null
                 this.formData.deadline = null
-            }
-        }
-    }
-})
-
-Vue.component('return-form', {
-    props: {
-        task: {
-            type: Object,
-            required: true
-        }
-    },
-    template: `
-        <div class="add-task-form">
-            <h3>Укажите причину возврата</h3>
-            <div class="form-group">
-                <textarea 
-                    v-model="returnReason" 
-                    placeholder="Введите причину возврата"
-                    rows="3"
-                    required
-                ></textarea>
-            </div>
-            <button @click="confirmReturn" class="task-btn">Переместить</button>
-        </div>
-    `,
-    data() {
-        return {
-            returnReason: null
-        }
-    },
-    methods: {
-        confirmReturn() {
-            if (this.returnReason && this.returnReason.trim()) {
-                this.$emit('confirm-return', {
-                    id: this.task.id,
-                    reason: this.returnReason
-                })
             }
         }
     }
